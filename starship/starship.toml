@@ -1,0 +1,111 @@
+# ~/.config/starship.toml — Specter099
+# Managed by dotfiles: https://github.com/Specter099/dotfiles
+
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$username\
+$directory\
+$git_branch\
+$git_status\
+$git_state\
+$python\
+$aws\
+$terraform\
+$docker_context\
+$fill\
+$cmd_duration\
+$time\
+$line_break\
+$character"""
+
+# ── Prompt character ──────────────────────────────────────────────────────────
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol   = "[❯](bold red)"
+
+# ── Directory ─────────────────────────────────────────────────────────────────
+[directory]
+style             = "bold cyan"
+truncation_length = 4
+truncate_to_repo  = true
+format            = "[$path]($style)[$read_only]($read_only_style) "
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+[git_branch]
+symbol = " "
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style  = "bold purple"
+
+[git_status]
+format    = "([\\[$all_status$ahead_behind\\]]($style) )"
+style     = "bold yellow"
+conflicted = "✖"
+ahead      = "⇡${count}"
+behind     = "⇣${count}"
+diverged   = "⇕⇡${ahead_count}⇣${behind_count}"
+untracked  = "?${count}"
+stashed    = "≡"
+modified   = "!${count}"
+staged     = "+${count}"
+renamed    = "»${count}"
+deleted    = "✘${count}"
+
+# ── AWS ───────────────────────────────────────────────────────────────────────
+[aws]
+format    = "[$symbol($profile)(\\($region\\))]($style) "
+symbol    = "☁️  "
+style     = "bold yellow"
+disabled  = false
+
+[aws.region_aliases]
+us-east-1      = "iad"
+us-east-2      = "cmh"
+us-west-2      = "pdx"
+eu-west-1      = "dub"
+ap-northeast-1 = "nrt"
+
+# ── Python ────────────────────────────────────────────────────────────────────
+[python]
+symbol         = "🐍 "
+format         = "[$symbol$virtualenv]($style) "
+style          = "bold green"
+detect_files   = [".python-version", "requirements.txt", "Pipfile", "pyproject.toml"]
+detect_folders = [".venv", "venv"]
+
+# ── Terraform ─────────────────────────────────────────────────────────────────
+[terraform]
+format   = "[$symbol$workspace]($style) "
+symbol   = "💠 "
+style    = "bold 105"
+disabled = false
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+[docker_context]
+symbol   = "🐳 "
+format   = "[$symbol$context]($style) "
+style    = "blue bold"
+disabled = false
+
+# ── Right side ────────────────────────────────────────────────────────────────
+[fill]
+symbol = " "
+
+[cmd_duration]
+min_time  = 2_000
+format    = "[$duration]($style) "
+style     = "bold yellow"
+show_milliseconds = false
+
+[time]
+disabled = false
+format   = "[$time]($style)"
+style    = "dimmed white"
+time_format = "%H:%M"
+
+# ── Username (show only when SSH) ─────────────────────────────────────────────
+[username]
+show_always = false
+format      = "[$user]($style) at "
+style_user  = "bold green"
+style_root  = "bold red"

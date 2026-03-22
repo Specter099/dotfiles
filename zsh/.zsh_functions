@@ -1,0 +1,198 @@
+# ~/.zsh_functions — Specter099
+# Managed by dotfiles: https://github.com/Specter099/dotfiles
+
+# ── AWS ───────────────────────────────────────────────────────────────────────
+
+# Switch AWS profile with fzf
+awsp() {
+  local profile
+  profile=$(aws configure list-profiles | fzf --prompt="AWS Profile: " --height=40%)
+  if [[ -n "$profile" ]]; then
+    export AWS_PROFILE="$profile"
+    echo "Switched to AWS profile: $AWS_PROFILE"
+  fi
+}
+
+# Export SSO credentials to env vars
+awsenv() {
+  local profile="${1:-$AWS_PROFILE}"
+  if [[ -z "$profile" ]]; then
+    echo "Usage: awsenv <profile>"
+    return 1
+  fi
+  eval "$(aws configure export-credentials --profile "$profile" --format env)"
+  echo "Exported credentials for: $profile"
+}
+
+# List all S3 buckets with size
+s3ls() {
+  aws s3 ls | sort -k3 | while read -r line; do
+    bucket=$(echo "$line" | awk '{print $3}')
+    size=$(aws s3 ls "s3://$bucket" --recursive --human-readable --summarize 2>/dev/null | tail -1 | awk '{print $3, $4}')
+    printf "%-60s %s\n" "$bucket" "${size:-unknown}"
+  done
+}
+
+# Tail CloudWatch log group (fuzzy pick)
+cwlogs() {
+  local group="${1}"
+  if [[ -z "$group" ]]; then
+    group=$(aws logs describe-log-groups --query 'logGroups[*].logGroupName' --output text | tr '\t' '\n' | fzf --prompt="Log group: ")
+  fi
+  [[ -z "$group" ]] && return 1
+  aws logs tail "$group" --follow --format short
+}
+
+# Describe EC2 instances as a table
+ec2ls() {
+  aws ec2 describe-instances \
+    --query 'Reservations[*].Instances[*].[InstanceId,State.Name,InstanceType,PublicIpAddress,Tags[?Key==`Name`].Value|[0]]' \
+    --output table
+}
+
+# Get SSM Parameter (with optional decrypt)
+ssm() {
+  local name="$1"
+  aws ssm get-parameter --name "$name" --with-decryption --query 'Parameter.Value' --output text
+}
+
+# Assume role and export creds
+assume-role() {
+  local role_arn="$1"
+  local session="${2:-cli-session}"
+  local creds
+  creds=$(aws sts assume-role --role-arn "$role_arn" --role-session-name "$session" --output json)
+  export AWS_ACCESS_KEY_ID=$(echo "$creds" | jq -r '.Credentials.AccessKeyId')
+  export AWS_SECRET_ACCESS_KEY=$(echo "$creds" | jq -r '.Credentials.SecretAccessKey')
+  export AWS_SESSION_TOKEN=$(echo "$creds" | jq -r '.Credentials.SessionToken')
+  echo "Assumed role: $role_arn (expires $(echo "$creds" | jq -r '.Credentials.Expiration'))"
+}
+
+# ── CDK ───────────────────────────────────────────────────────────────────────
+
+# CDK diff with color and pager
+cdiff() {
+  cdk diff "$@" 2>&1 | less -R
+}
+
+# Bootstrap CDK in current account/region
+cdk-bootstrap() {
+  local account region
+  account=$(aws sts get-caller-identity --query Account --output text)
+  region=$(aws configure get region)
+  cdk bootstrap "aws://$account/$region"
+}
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+
+# Create and push feature branch
+feature() {
+  local name="$1"
+  [[ -z "$name" ]] && { echo "Usage: feature <branch-name>"; return 1; }
+  git checkout -b "feature/$name"
+  git push -u origin "feature/$name"
+}
+
+# Interactive rebase onto main
+rebase-main() {
+  local base="${1:-main}"
+  git fetch origin "$base"
+  git rebase "origin/$base"
+}
+
+# Show all branches sorted by last commit date
+branches() {
+  git for-each-ref --sort=-committerdate refs/heads/ \
+    --format='%(color:yellow)%(refname:short)%(color:reset) - %(color:green)%(committerdate:relative)%(color:reset) by %(authorname)'
+}
+
+# ── Dev tools ─────────────────────────────────────────────────────────────────
+
+# Create Python project with venv
+mkpy() {
+  local name="$1"
+  [[ -z "$name" ]] && { echo "Usage: mkpy <project-name>"; return 1; }
+  mkdir "$name" && cd "$name"
+  python3 -m venv .venv
+  source .venv/bin/activate
+  cat > requirements.txt <<EOF
+# $name requirements
+EOF
+  cat > .gitignore <<EOF
+.venv/
+__pycache__/
+*.pyc
+.env
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+EOF
+  git init && git add . && git commit -m "chore: initial project scaffold"
+  echo "Project $name ready. Venv activated."
+}
+
+# Create CDK Python project
+mkcdk() {
+  local name="$1"
+  [[ -z "$name" ]] && { echo "Usage: mkcdk <stack-name>"; return 1; }
+  mkdir "$name" && cd "$name"
+  cdk init app --language python
+  source .venv/bin/activate
+  pip install -r requirements.txt -q
+  echo "CDK Python project $name ready."
+}
+
+# ── Utilities ─────────────────────────────────────────────────────────────────
+
+# Make directory and cd into it
+mkcd() { mkdir -p "$@" && cd "$_"; }
+
+# Extract any archive
+extract() {
+  if [[ -f "$1" ]]; then
+    case "$1" in
+      *.tar.bz2)  tar xjf "$1"     ;;
+      *.tar.gz)   tar xzf "$1"     ;;
+      *.tar.xz)   tar xJf "$1"     ;;
+      *.tar)      tar xf  "$1"     ;;
+      *.bz2)      bunzip2 "$1"     ;;
+      *.gz)       gunzip  "$1"     ;;
+      *.zip)      unzip   "$1"     ;;
+      *.7z)       7z x    "$1"     ;;
+      *)          echo "Unknown archive format: $1" ;;
+    esac
+  else
+    echo "'$1' is not a valid file"
+  fi
+}
+
+# Port check
+port() { lsof -i ":$1" | grep LISTEN; }
+
+# HTTP response code check
+httpcode() { curl -o /dev/null -s -w "%{http_code}\n" "$1"; }
+
+# JSON pretty-print from clipboard
+jsonclip() { pbpaste | python3 -m json.tool; }
+
+# Quick HTTP server
+serve() { python3 -m http.server "${1:-8080}"; }
+
+# Find file by name
+ff() { find . -name "*$1*" -not -path "*/.git/*" 2>/dev/null; }
+
+# Grep with context
+rg-context() { rg "$1" -C "${2:-3}"; }
+
+# Kill process on port
+killport() {
+  local pid
+  pid=$(lsof -ti ":$1")
+  if [[ -n "$pid" ]]; then
+    kill -9 "$pid"
+    echo "Killed PID $pid on port $1"
+  else
+    echo "No process found on port $1"
+  fi
+}

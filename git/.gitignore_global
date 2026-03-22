@@ -1,0 +1,68 @@
+# ~/.gitignore_global — Specter099
+# Applied globally to all repos
+
+# ── macOS ─────────────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+.vim/
+
+# ── Python ────────────────────────────────────────────────────────────────────
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# ── Node ──────────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+
+# ── AWS / CDK ─────────────────────────────────────────────────────────────────
+cdk.out/
+cdk.context.json
+.cdk.staging/
+.aws-sam/
+
+# ── Secrets / env ─────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+
+# ── Terraform ─────────────────────────────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraformrc
+
+# ── AI tools ──────────────────────────────────────────────────────────────
+.claude/
+.cursor/
+.copilot/
+.aider*
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+*.log
+*.tmp
+bisect-result.json

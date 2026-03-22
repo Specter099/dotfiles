@@ -1,0 +1,123 @@
+# ~/.zsh_aliases — Specter099
+# Managed by dotfiles: https://github.com/Specter099/dotfiles
+
+# ── Navigation ────────────────────────────────────────────────────────────────
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+alias -- -='cd -'
+
+# ── Modern replacements ───────────────────────────────────────────────────────
+if command -v eza >/dev/null; then
+  alias ls='eza --icons'
+  alias ll='eza -la --icons --git --group-directories-first'
+  alias lt='eza --tree --icons --level=2'
+  alias l='eza -l --icons --git --group-directories-first'
+else
+  alias ls='ls -G'
+  alias ll='ls -lah'
+fi
+
+if command -v bat >/dev/null; then
+  alias cat='bat --style=plain'
+  alias less='bat --paging=always'
+fi
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+alias g='git'
+alias ga='git add'
+alias gaa='git add --all'
+alias gc='git commit -v'
+alias gco='git checkout'
+alias gcb='git checkout -b'
+alias gs='git status -sb'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gp='git push'
+alias gpl='git pull --rebase'
+alias gl='git log --oneline --graph --decorate -20'
+alias gla='git log --oneline --graph --decorate --all'
+alias grb='git rebase'
+alias gst='git stash'
+alias gstp='git stash pop'
+alias gbl='git branch -vv'
+alias gtag='git tag --sort=-creatordate | head -10'
+alias gclean='git branch --merged | grep -v "main\|master\|develop" | xargs git branch -d'
+# Show commit signature
+alias gverify='git log --show-signature -1'
+
+# ── AWS ───────────────────────────────────────────────────────────────────────
+alias awsid='aws sts get-caller-identity'
+alias awsregion='aws configure get region'
+alias awsprofile='echo $AWS_PROFILE'
+
+# ── CDK ───────────────────────────────────────────────────────────────────────
+alias ci='cdk init'
+alias cs='cdk synth'
+alias cd-diff='cdk diff'
+alias cdeploy='cdk deploy --require-approval never'
+alias cdestroy='cdk destroy'
+alias clist='cdk list'
+
+# ── GitHub CLI ────────────────────────────────────────────────────────────────
+alias ghpr='gh pr create --fill'
+alias ghprl='gh pr list'
+alias ghprco='gh pr checkout'
+alias ghrv='gh repo view --web'
+alias ghrun='gh run list --limit 10'
+alias ghwatch='gh run watch'
+
+# ── Python / pip ─────────────────────────────────────────────────────────────
+alias py='python3'
+alias pip='pip3'
+alias venv='python3 -m venv .venv && source .venv/bin/activate'
+alias activate='source .venv/bin/activate'
+alias pipu='pip install --upgrade pip'
+
+# ── Homelab ───────────────────────────────────────────────────────────────────
+# Add your homelab SSH shortcuts here
+# alias pfsense='ssh admin@pfsense.local'
+# alias smc='ssh brian@supermicro.local'
+# alias pihole='ssh pi@pihole.local'
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+alias d='docker'
+alias dc='docker compose'
+alias dps='docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"'
+alias dlogs='docker logs -f'
+alias dclean='docker system prune -af'
+
+# ── Ansible ──────────────────────────────────────────────────────────────────
+alias ap='ansible-playbook'
+alias ai='ansible-inventory'
+alias ag='ansible-galaxy'
+
+# ── Terraform ─────────────────────────────────────────────────────────────────
+alias tf='terraform'
+alias tfi='terraform init'
+alias tfp='terraform plan'
+alias tfa='terraform apply'
+alias tfd='terraform destroy'
+
+# ── Misc ──────────────────────────────────────────────────────────────────────
+alias reload='source ~/.zshrc'
+alias path='echo $PATH | tr ":" "\n"'
+alias myip='curl -s ifconfig.me'
+alias ports='netstat -tulanp 2>/dev/null || lsof -i -P -n | grep LISTEN'
+alias week='date +%V'
+alias timestamp='date -u +"%Y-%m-%dT%H:%M:%SZ"'
+alias uuid='python3 -c "import uuid; print(uuid.uuid4())"'
+alias sha='shasum -a 256'
+alias urlencode='python3 -c "import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1]))"'
+alias urldecode='python3 -c "import sys, urllib.parse; print(urllib.parse.unquote(sys.argv[1]))"'
+alias json='python3 -m json.tool'
+
+# Clipboard
+alias copy='pbcopy'
+alias paste='pbpaste'
+
+# Quick edit dotfiles
+alias zshrc='$EDITOR ~/.zshrc'
+alias aliases='$EDITOR ~/.zsh_aliases'
+alias dotfiles='cd ~/dev/dotfiles'

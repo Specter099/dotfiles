@@ -1,0 +1,88 @@
+[user]
+	name = Brian Lauer
+	# email and signingkey are set by setup-signed-commits.sh
+	# Run: ./setup-signed-commits.sh to configure
+
+[gpg]
+	format = ssh
+
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
+
+[commit]
+	gpgsign = true
+
+[tag]
+	gpgsign = true
+
+[core]
+	editor = vim
+	autocrlf = input
+	pager = delta
+	excludesfile = ~/.gitignore_global
+
+[delta]
+	navigate = true
+	light = false
+	side-by-side = true
+	line-numbers = true
+
+[interactive]
+	diffFilter = delta --color-only
+
+[merge]
+	conflictstyle = diff3
+
+[diff]
+	colorMoved = default
+
+[pull]
+	rebase = true
+
+[push]
+	default = current
+	autoSetupRemote = true
+
+[fetch]
+	prune = true
+
+[rebase]
+	autoStash = true
+	autoSquash = true
+
+[init]
+	defaultBranch = main
+
+[alias]
+	# Shortcuts
+	st = status -sb
+	co = checkout
+	br = branch
+	ci = commit
+	lg = log --oneline --graph --decorate -20
+	lga = log --oneline --graph --decorate --all
+	# Show last commit
+	last = log -1 HEAD --stat
+	# Verify last commit signature
+	verify = log --show-signature -1
+	# Undo last commit (keep changes)
+	undo = reset HEAD~1 --mixed
+	# List aliases
+	aliases = !git config --list | grep alias | sed 's/alias\\.//g'
+	# Show stash list
+	sl = stash list
+	# Clean merged branches
+	clean-merged = !git branch --merged | grep -v 'main\\|master\\|develop' | xargs git branch -d
+	# Amend without editing message
+	amend = commit --amend --no-edit
+	# Word diff
+	wdiff = diff --word-diff
+
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+
+[color]
+	ui = auto
+
+[credential]
+	helper = osxkeychain
