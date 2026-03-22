@@ -58,15 +58,24 @@ defaults write com.apple.finder NewWindowTarget -string "PfLo"
 defaults write com.apple.finder NewWindowTargetPath -string "file://$HOME/"
 ok "Finder: new window → home"
 
+# Auto-empty trash after 30 days
+defaults write com.apple.finder FXRemoveOldTrashItems -bool true
+ok "Finder: auto-empty trash after 30 days"
+
+# No .DS_Store on network or USB drives
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+ok "Finder: no .DS_Store on network/USB volumes"
+
 # ── Dock ──────────────────────────────────────────────────────────────────────
 # Auto-hide dock
 defaults write com.apple.dock autohide -bool true
 defaults write com.apple.dock autohide-delay -float 0.1
 ok "Dock: auto-hide"
 
-# Smaller dock
-defaults write com.apple.dock tilesize -int 42
-ok "Dock: tile size 42"
+# Dock icon size
+defaults write com.apple.dock tilesize -int 62
+ok "Dock: tile size 62"
 
 # Don't show recent apps in dock
 defaults write com.apple.dock show-recents -bool false
@@ -130,6 +139,14 @@ ok "Save/print dialogs: expanded by default"
 # Disable auto-correct
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 ok "Auto-correct: disabled"
+
+# Disable auto-capitalize
+defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
+ok "Auto-capitalize: disabled"
+
+# Disable double-space period
+defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
+ok "Double-space period: disabled"
 
 # Disable smart quotes (kills code pasting issues)
 defaults write NSGlobalDomain NSAutomaticQuoteSubstitutionEnabled -bool false
