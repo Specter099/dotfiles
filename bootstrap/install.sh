@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # install.sh — Idempotent dotfiles bootstrap for macOS + zsh
-# Usage: ./install.sh [--minimal] [--no-tools] [--no-macos]
+# Usage: ./install.sh [--minimal] [--no-tools] [--no-macos] [--no-nas]
 #
 # One-liner: curl -fsSL https://raw.githubusercontent.com/Specter099/dotfiles/main/install.sh | bash
 set -euo pipefail
@@ -12,12 +12,14 @@ BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
 MINIMAL=false
 SKIP_TOOLS=false
 SKIP_MACOS=false
+SKIP_NAS=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --minimal)   MINIMAL=true;     shift ;;
     --no-tools)  SKIP_TOOLS=true;  shift ;;
     --no-macos)  SKIP_MACOS=true;  shift ;;
+    --no-nas)    SKIP_NAS=true;    shift ;;
     *) warn "Unknown argument: $1"; shift ;;
   esac
 done
@@ -259,13 +261,23 @@ else
   warn "setup-signed-commits.sh not found in bootstrap/ — skipping"
 fi
 
-# ── 8. macOS preferences ──────────────────────────────────────────────────────
+# ── 8. NAS auto-mount ────────────────────────────────────────────────────────
+if is_mac && ! $SKIP_NAS && ! $MINIMAL; then
+  step "NAS Auto-Mount (SMB)"
+  if [[ -f "$DOTFILES_DIR/bootstrap/setup-nas-mount.sh" ]]; then
+    bash "$DOTFILES_DIR/bootstrap/setup-nas-mount.sh"
+  else
+    warn "setup-nas-mount.sh not found in bootstrap/ — skipping"
+  fi
+fi
+
+# ── 9. macOS preferences ──────────────────────────────────────────────────────
 if is_mac && ! $SKIP_MACOS && ! $MINIMAL; then
   step "macOS Preferences"
   bash "$DOTFILES_DIR/bootstrap/macos.sh"
 fi
 
-# ── 9. fzf shell integration ──────────────────────────────────────────────────
+# ── 10. fzf shell integration ─────────────────────────────────────────────────
 step "fzf Shell Integration"
 if [[ ! -f "$HOME/.fzf.zsh" ]]; then
   "$(brew --prefix)/opt/fzf/install" --key-bindings --completion --no-update-rc --no-bash --no-fish
