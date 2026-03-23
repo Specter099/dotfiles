@@ -252,6 +252,7 @@ link "$DOTFILES_DIR/zsh/.zsh_functions"     "$HOME/.zsh_functions"
 link "$DOTFILES_DIR/git/.gitconfig"         "$HOME/.gitconfig"
 link "$DOTFILES_DIR/git/.gitignore_global"  "$HOME/.gitignore_global"
 link "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
+link "$DOTFILES_DIR/ssh/config"             "$HOME/.ssh/config"
 
 # ── 7. Signed commits ─────────────────────────────────────────────────────────
 step "SSH Commit Signing"
