@@ -1,0 +1,39 @@
+Host *
+  AddKeysToAgent yes
+
+# SSH over Session Manager
+host i-* mi-*
+    ProxyCommand sh -c "aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters 'portNumber=%p'"
+
+Host github.com
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/.ssh/github
+
+Host bitwarden
+  AddKeysToAgent yes
+  UseKeychain yes
+  IdentityFile ~/Documents/repos/ssh-keys/bitwarden.pem
+  User ubuntu
+  HostKeyAlias i-0f6b0c151c7ac464f
+
+Host apartment-pfsense
+  AddKeysToAgent yes
+  UseKeychain yes
+  User brian
+  HostName 10.0.0.1
+  IdentityFile ~/.ssh/apartment_pfsense
+
+Host dads-pfsense
+  AddKeysToAgent yes
+  UseKeychain yes
+  User brian
+  HostName 192.168.1.1
+  IdentityFile ~/.ssh/house_pfsense
+
+Host shop-pfsense
+  AddKeysToAgent yes
+  UseKeychain yes
+  User brian
+  HostName 192.168.0.1
+  IdentityFile ~/.ssh/pfsense_sg1100

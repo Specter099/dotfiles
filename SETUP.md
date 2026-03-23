@@ -120,6 +120,10 @@ ln -sf $DOTFILES/git/.gitignore_global ~/.gitignore_global
 # Starship
 mkdir -p ~/.config
 ln -sf $DOTFILES/starship/starship.toml ~/.config/starship.toml
+
+# SSH
+mkdir -p ~/.ssh
+ln -sf $DOTFILES/ssh/config              ~/.ssh/config
 ```
 
 ### Step 7: Set up SSH commit signing
