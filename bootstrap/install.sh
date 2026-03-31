@@ -244,7 +244,7 @@ done
 # ── 6. Symlink dotfiles ───────────────────────────────────────────────────────
 step "Symlinking Dotfiles"
 
-mkdir -p "$HOME/.config" "$HOME/.ssh"
+mkdir -p "$HOME/.config" "$HOME/.ssh" "$HOME/.claude"
 
 link "$DOTFILES_DIR/zsh/.zshrc"             "$HOME/.zshrc"
 link "$DOTFILES_DIR/zsh/.zsh_aliases"       "$HOME/.zsh_aliases"
@@ -253,6 +253,7 @@ link "$DOTFILES_DIR/git/.gitconfig"         "$HOME/.gitconfig"
 link "$DOTFILES_DIR/git/.gitignore_global"  "$HOME/.gitignore_global"
 link "$DOTFILES_DIR/starship/starship.toml" "$HOME/.config/starship.toml"
 link "$DOTFILES_DIR/ssh/config"             "$HOME/.ssh/config"
+link "$DOTFILES_DIR/claude/statusline-command.sh" "$HOME/.claude/statusline-command.sh"
 
 # ── 7. Signed commits ─────────────────────────────────────────────────────────
 step "SSH Commit Signing"
