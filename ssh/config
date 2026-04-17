@@ -37,3 +37,7 @@ Host shop-pfsense
   User brian
   HostName 192.168.0.1
   IdentityFile ~/.ssh/pfsense_sg1100
+
+Host 34.200.126.37                                                                                                                                                 
+  HostKeyAlgorithms +ssh-rsa                                                                                                                                   
+  PubkeyAcceptedAlgorithms +ssh-rsa 
