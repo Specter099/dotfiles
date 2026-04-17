@@ -17,6 +17,13 @@ sso_role_name = AdministratorAccess
 region = us-east-1
 output = json
 
+[profile main-ro]
+sso_session = sso
+sso_account_id = 533833010512
+sso_role_name = ReadOnlyAccess
+region = us-east-1
+output = json
+
 # --- Production (451645558365) ---
 [profile production]
 sso_session = sso
